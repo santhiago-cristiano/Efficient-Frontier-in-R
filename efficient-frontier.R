@@ -49,20 +49,27 @@ tickers <- c(
 )
 
 
-# pegando cotacoes e calculando retornos  ----------------------------------------------------------------
+# pegando as cotacoes ----------------------------------------------------------------
 
-# cotacoes
+# pegando cotacoes e salvando em um arquivo csv
 
-tq_get(
-  tickers,
-  get  = "stock.prices",
-  from = "2012-04-15",
-  to   = "2021-05-15",
-  periodicity = "monthly"
-) %>%
-  write_csv(file = "cotacoes.csv")
+# tq_get(
+#   tickers,
+#   get  = "stock.prices",
+#   from = "2012-04-15",
+#   to   = "2021-05-15",
+#   periodicity = "monthly"
+# ) %>%
+#   write_csv(file = "cotacoes.csv")
+
+
+# lendo o csv
 
 cotacoes <- read_csv(file = "cotacoes.csv")
+
+
+
+# calculando retornos, desvio padrao, correlacao e covariancia ------------
 
 # retornos
 
@@ -75,7 +82,7 @@ retornos <- cotacoes %>%
     col_rename = "retornos"
   )
 
-# matrizes de covariancia
+# matriz de covariancia
 
 matriz_cov <- retornos %>%
   pivot_wider(names_from = symbol, values_from = retornos) %>%
