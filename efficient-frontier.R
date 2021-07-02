@@ -129,7 +129,7 @@ plt_correl <- ggcorrplot(
 # exportar grafico
 
 ggsave(
-  filename = "plt_correl.svg",
+  filename = "./export-plots/plt_correl.svg",
   plot = plt_correl,
   scale = 1.5,
   device = "svg"
@@ -157,7 +157,7 @@ plt_acoes <- ret_med_desv_pad %>%
 # exportar grafico
 
 ggsave(
-  filename = "plt_acoes.svg",
+  filename = "./export-plots/plt_acoes.svg",
   plot = plt_acoes,
   scale = 1,
   device = "svg"
@@ -290,7 +290,7 @@ plt_fronteira <- df_fronteira %>%
 # exportar grafico
 
 ggsave(
-  filename = "plt_fronteira.svg",
+  filename = "./export-plots/plt_fronteira.svg",
   plot = plt_fronteira,
   scale = 1.5,
   device = "svg"
@@ -303,30 +303,35 @@ ggsave(
 
 # nomes das empresas
 
-nomes_empresas <- tribble(
-  ~ setor     , ~ nome_empresa,
-  "Varejo"    , "Magazine Luiza",
-  "Varejo"    , "Via Varejo",
-  "Varejo"    , "Lojas Americanas",
-  "Energia"   , "Edp - Energias do Brasil",
-  "Energia"   , "Engie Brasil Energia",
-  "Energia"   , "Energisa Unt",
-  "Financeiro", "Itausa",
-  "Financeiro", "Banco Bradesco",
-  "Financeiro", "Banco do Brasil",
-  "Siderurgia", "Gerdau",
-  "Siderurgia", "Companhia Siderúrgica Nacional",
-  "Siderurgia", "Usinas Siderúrgicas de Minas Gerais - Usiminas"
+nomes_empresas <- c(
+  "Magazine Luiza",
+  "Via Varejo",
+  "Lojas Americanas",
+  "Edp - Energias do Brasil",
+  "Engie Brasil Energia",
+  "Energisa Unt",
+  "Itausa",
+  "Banco Bradesco",
+  "Banco do Brasil",
+  "Gerdau",
+  "Companhia Siderúrgica Nacional",
+  "Usinas Siderúrgicas de Minas Gerais - Usiminas"
 )
+
+# nomes das empresas + tickers
+
+nomes_empresas_tickers <-
+  bind_cols("symbol" = tickers, "nome_empresa" = nomes_empresas)
 
 # tabela
 
 ret_med_desv_pad %>%
-  left_join(nomes_empresas, by = "setor") %>%
+  left_join(nomes_empresas_tickers, by = "symbol") %>%
   select(symbol, nome_empresa, setor) %>%
+  arrange(setor) %>%
   kable(
     format = "latex",
-    booktabs = FALSE,
+    booktabs = TRUE,
     linesep = "",
     align = "c",
     digits = 2,
@@ -339,7 +344,8 @@ ret_med_desv_pad %>%
       "\\textbf{Setor}"
     ),
     escape = FALSE
-  )
+  ) %>%
+  write_file("./export-tables/empresas.tex")
 
 
 ## tabela com os pesos da carteira de tangencia e da carteira de min. var.
@@ -375,4 +381,5 @@ df_pesos_carteiras %>%
       "\\textbf{Carteira de Mínima Variância}"
     ),
     escape = FALSE
-  )
+  ) %>%
+  write_file("./export-tables/pesos_carteiras.tex")
